@@ -1,0 +1,39 @@
+{
+  "name": "ai-image-classifier",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Image classifier using OpenAI GPT-4o",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "classify": "tsx scripts/classify.ts",
+    "eval": "tsx scripts/eval.ts"
+  },
+  "keywords": [
+    "openai",
+    "image",
+    "classifier"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/icons-material": "^7.3.5",
+    "@mui/material": "^7.3.5",
+    "openai": "^4.67.3",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.9.3",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^4.5.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.9.3",
+    "vite": "^6.3.5"
+  }
+}
