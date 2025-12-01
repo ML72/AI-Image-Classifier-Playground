@@ -2,10 +2,21 @@
 
 To reproduce our experiments:
 
-1. Set your OpenAI API key in your terminal, replacing `my-key-here` with your key:
+1. Set your OpenAI API key in your terminal, replacing `your-api-key-here` with your key:
 
+    **Windows (Command Prompt):**
+    ```cmd
+    set OPENAI_API_KEY=your-api-key-here
     ```
-    set OPENAI_API_KEY="my-key-here"
+
+    **Windows (PowerShell):**
+    ```powershell
+    $env:OPENAI_API_KEY="your-api-key-here"
+    ```
+
+    **macOS/Linux:**
+    ```bash
+    export OPENAI_API_KEY=your-api-key-here
     ```
 
 2. Generate predictions with both prompts for both classes of images:

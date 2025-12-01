@@ -104,12 +104,14 @@ interface TestImage {
 
 function App() {
   // Load in test images from public/images folder
+  // Use import.meta.env.BASE_URL to handle GitHub Pages base path
+  const baseUrl = import.meta.env.BASE_URL;
   const testImages: TestImage[] = [
     // AI images - diffusion models
     ...['diffusion1', 'diffusion2', 'diffusion3', 'diffusion4'].flatMap((type) =>
       Array.from({ length: 10 }, (_, i) => ({
         id: `${type}_${i + 1}`,
-        url: `/images/ai/${type}_${i + 1}.jpg`,
+        url: `${baseUrl}images/ai/${type}_${i + 1}.jpg`,
         groundTruth: 'ai' as const,
         fileName: `${type}_${i + 1}.jpg`,
       }))
@@ -117,7 +119,7 @@ function App() {
     // AI images - GAN
     ...Array.from({ length: 10 }, (_, i) => ({
       id: `gan_${i + 1}`,
-      url: `/images/ai/gan_${i + 1}.jpg`,
+      url: `${baseUrl}images/ai/gan_${i + 1}.jpg`,
       groundTruth: 'ai' as const,
       fileName: `gan_${i + 1}.jpg`,
     })),
@@ -125,7 +127,7 @@ function App() {
     ...['animals', 'city', 'food', 'nature', 'people'].flatMap((category) =>
       Array.from({ length: 10 }, (_, i) => ({
         id: `${category}_${i + 1}`,
-        url: `/images/real/${category}_${i + 1}.jpg`,
+        url: `${baseUrl}images/real/${category}_${i + 1}.jpg`,
         groundTruth: 'real' as const,
         fileName: `${category}_${i + 1}.jpg`,
       }))

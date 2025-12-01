@@ -1,6 +1,6 @@
 # AI Image Classification Playground
 
-A React web application that uses OpenAI's GPT-4o to classify images as AI-generated or real.
+Configure custom prompts to classify AI-generated vs. real photographs! View the interactive web interface on [GitHub Pages](https://ml72.github.io/AI-Image-Classifier-Playground/). You can also run experiments directly on your terminal. View the `scripts` folder for more information.
 
 ![Image Classification Examples](results/plots/image_grid_visualization.png)
 
@@ -10,7 +10,7 @@ A React web application that uses OpenAI's GPT-4o to classify images as AI-gener
 - **npm** (comes with Node.js)
 - **OpenAI API key** ([Get one here](https://platform.openai.com/api-keys))
 
-## Setup
+## Local Environment Setup
 
 ### 1. Clone the Repository
 
@@ -25,31 +25,7 @@ cd AI-Image-Classifier-Playground
 npm install
 ```
 
-### 3. Configure OpenAI API Key
-
-Set your OpenAI API key as an environment variable:
-
-**Windows (Command Prompt):**
-```cmd
-set OPENAI_API_KEY=your-api-key-here
-```
-
-**Windows (PowerShell):**
-```powershell
-$env:OPENAI_API_KEY="your-api-key-here"
-```
-
-**macOS/Linux:**
-```bash
-export OPENAI_API_KEY=your-api-key-here
-```
-
-> **Note:** For persistent configuration, create a `.env` file in the project root:
-> ```
-> OPENAI_API_KEY=your-api-key-here
-> ```
-
-## Running the Application
+## Local Application Development
 
 ### Development Mode
 
@@ -81,43 +57,17 @@ npm run preview
 
 ## Command Line Tools
 
-### Classify Individual Images
+Visit the `scripts` folder for documentation on running experiments from the command line.
 
-Classify a single image using the CLI:
-
-**Basic prompt:**
-```bash
-npm run classify public/images/real/photo.jpg basic
-```
-
-**Detailed prompt:**
-```bash
-npm run classify public/images/ai/generated.png detailed
-```
-
-### Batch Evaluation
-
-Run evaluation on multiple images in the `public/images/` directory:
-
-```bash
-npm run eval
-```
-
-This will generate prediction results in the `results/predictions/` directory.
+Note that you will need Python to run our command line visualization scripts. You will get pretty plots like this though!
 
 ![Confusion Matrices](results/plots/confusion_matrices.png)
-
-### Visualize Results
-
-Visualize prediction results (requires Python):
-
-```bash
-python scripts/visualize_predictions.py
-```
 
 Charts will be saved to `results/plots/`.
 
 ## Prompts
+
+We support two prompts by default, but you can configure custom prompts in our GitHub pages interactive demo:
 
 - **Basic**: Simple question with no guidance
 - **Detailed**: Includes specific indicators to look for (distortions, lighting issues, texture anomalies, etc.)
@@ -127,20 +77,18 @@ The responses are strictly "Yes" (AI-generated) or "No" (real) for programmatic 
 ## Project Structure
 
 ```
-├── public/                 # Static files
+├── public/                     # Static files
+│   └── images/                 # Test images (ai/ and real/)
 ├── src/
-│   ├── util/              # Utility modules
-│   │   ├── classifier.ts  # Main classifier class
-│   │   └── prompts.ts     # Prompt definitions
-│   ├── App.tsx            # Main React component
-│   ├── index.tsx          # React entry point
-│   └── index.css          # Global styles
-├── scripts/               # Command-line scripts
-│   ├── classify.ts        # CLI for single image classification
-│   ├── eval.ts            # Batch evaluation script
-│   └── visualize_predictions.py  # Visualization tool
-└── data/                  # Image data and results
-    ├── images/            # Test images (ai/ and real/)
-    ├── plots/             # Generated visualizations
-    └── predictions/       # Prediction results
+│   ├── util/                   # Utility classes
+│   ├── App.tsx                 # Main React component
+│   ├── index.tsx               # React entry point
+│   └── index.css               # Global styles
+├── scripts/                    # Scripts to run in terminal
+│   ├── generate_predictions.ts
+│   ├── visualize_predictions.py
+│   └── visualize_data.py
+└── results/                    # Image data and results
+    ├── plots/                  # Generated visualizations
+    └── predictions/            # Prediction results
 ```
