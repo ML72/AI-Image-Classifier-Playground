@@ -1,208 +1,373 @@
-import { useState, ChangeEvent } from 'react';
+import { useState } from 'react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import {
-  Container,
+  Box,
   AppBar,
   Toolbar,
   Typography,
-  Box,
-  Paper,
+  Container,
+  TextField,
   Button,
+  Chip,
   Card,
-  CardContent,
-  CardActions,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  SelectChangeEvent,
-  Alert,
-  CircularProgress,
+  Stack,
+  Tabs,
+  Tab,
+  Tooltip,
 } from '@mui/material';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import ImageIcon from '@mui/icons-material/Image';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CancelIcon from '@mui/icons-material/Cancel';
+import { prompts } from './util/prompts';
+import './App.css';
 
 const theme = createTheme({
   palette: {
     mode: 'light',
     primary: {
-      main: '#1976d2',
+      main: '#2563eb',
     },
-    secondary: {
-      main: '#dc004e',
+    success: {
+      main: '#10b981',
+    },
+    error: {
+      main: '#ef4444',
+    },
+    background: {
+      default: '#f8fafc',
+      paper: '#ffffff',
+    },
+  },
+  typography: {
+    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif',
+    h4: {
+      fontWeight: 700,
+    },
+    h6: {
+      fontWeight: 600,
+    },
+  },
+  shape: {
+    borderRadius: 12,
+  },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          textTransform: 'none',
+          fontWeight: 600,
+          padding: '10px 24px',
+        },
+      },
+    },
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
+          transition: 'all 0.2s ease-in-out',
+          '&:hover': {
+            boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
+          },
+        },
+      },
     },
   },
 });
 
-interface ClassificationResult {
-  prediction: string;
-  promptType: string;
-  imageName: string;
+interface TestImage {
+  id: string;
+  url: string;
+  groundTruth: 'ai' | 'real';
+  fileName: string;
 }
 
 function App() {
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string>('');
-  const [promptType, setPromptType] = useState<'basic' | 'detailed'>('basic');
-  const [result, setResult] = useState<ClassificationResult | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string>('');
+  const [customPrompt, setCustomPrompt] = useState(prompts.basic);
+  const [selectedImages, setSelectedImages] = useState<string[]>([]);
+  const [filterType, setFilterType] = useState<'all' | 'ai' | 'real'>('all');
+  const [promptTab, setPromptTab] = useState(0);
 
-  const handleImageSelect = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setSelectedImage(file);
-      setResult(null);
-      setError('');
-      
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+  // Mock test images - in real implementation, these would be loaded from the data/images folder
+  const testImages: TestImage[] = [
+    // AI images
+    ...Array.from({ length: 50 }, (_, i) => ({
+      id: `ai-${i}`,
+      url: `data/images/ai/image_${i}.jpg`,
+      groundTruth: 'ai' as const,
+      fileName: `ai_image_${i}.jpg`,
+    })),
+    // Real images
+    ...Array.from({ length: 50 }, (_, i) => ({
+      id: `real-${i}`,
+      url: `data/images/real/image_${i}.jpg`,
+      groundTruth: 'real' as const,
+      fileName: `real_image_${i}.jpg`,
+    })),
+  ];
+
+  const filteredImages = testImages.filter((img) => {
+    if (filterType === 'all') return true;
+    return img.groundTruth === filterType;
+  });
+
+  const handlePromptTabChange = (_: React.SyntheticEvent, newValue: number) => {
+    setPromptTab(newValue);
+    if (newValue === 0) {
+      setCustomPrompt(prompts.basic);
+    } else if (newValue === 1) {
+      setCustomPrompt(prompts.detailed);
     }
   };
 
-  const handlePromptTypeChange = (event: SelectChangeEvent) => {
-    setPromptType(event.target.value as 'basic' | 'detailed');
+  const handleImageSelect = (imageId: string) => {
+    setSelectedImages((prev) =>
+      prev.includes(imageId)
+        ? prev.filter((id) => id !== imageId)
+        : [...prev, imageId]
+    );
   };
 
-  const handleClassify = async () => {
-    if (!selectedImage) {
-      setError('Please select an image first');
-      return;
-    }
+  const handleRunExperiment = () => {
+    // TODO: Implement experiment execution
+    console.log('Running experiment with:', {
+      prompt: customPrompt,
+      selectedImages: selectedImages.length > 0 ? selectedImages : 'all images',
+    });
+  };
 
-    setLoading(true);
-    setError('');
-    setResult(null);
+  const handleSelectAll = () => {
+    setSelectedImages(filteredImages.map((img) => img.id));
+  };
 
-    try {
-      // TODO: Implement API call to backend for image classification
-      // For now, this is a placeholder
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      setResult({
-        prediction: 'Yes',
-        promptType,
-        imageName: selectedImage.name,
-      });
-    } catch (err) {
-      setError('Failed to classify image. Please try again.');
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
+  const handleDeselectAll = () => {
+    setSelectedImages([]);
   };
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Box sx={{ flexGrow: 1 }}>
-        <AppBar position="static">
-          <Toolbar>
-            <ImageIcon sx={{ mr: 2 }} />
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              AI Image Classifier
-            </Typography>
+      <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
+        {/* Header */}
+        <AppBar position="static" elevation={0} sx={{ bgcolor: 'white', borderBottom: '1px solid #e5e7eb' }}>
+          <Toolbar sx={{ py: 1 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+              <ImageIcon sx={{ fontSize: 28, color: 'primary.main' }} />
+              <Typography variant="h6" component="div" sx={{ color: 'text.primary', fontWeight: 700 }}>
+                AI Image Classifier
+              </Typography>
+            </Box>
           </Toolbar>
         </AppBar>
 
-        <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>
-          <Paper elevation={3} sx={{ p: 4 }}>
-            <Typography variant="h4" component="h1" gutterBottom>
-              Detect AI-Generated Images
+        <Container maxWidth="xl" sx={{ py: 4 }}>
+          {/* Page Title */}
+          <Box sx={{ mb: 4 }}>
+            <Typography variant="h4" gutterBottom>
+              Image Classification Experiment
             </Typography>
-            <Typography variant="body1" color="text.secondary" paragraph>
-              Upload an image to determine if it's AI-generated or a real photograph using GPT-4o Vision.
+            <Typography variant="body1" color="text.secondary">
+              Select test images and configure your prompt to classify AI-generated vs. real photographs
             </Typography>
+          </Box>
 
-            <Box sx={{ mt: 3, mb: 3 }}>
-              <FormControl fullWidth sx={{ mb: 2 }}>
-                <InputLabel id="prompt-type-label">Prompt Type</InputLabel>
-                <Select
-                  labelId="prompt-type-label"
-                  id="prompt-type"
-                  value={promptType}
-                  label="Prompt Type"
-                  onChange={handlePromptTypeChange}
+          <Box sx={{ display: 'flex', gap: 3, flexDirection: { xs: 'column', lg: 'row' } }}>
+            {/* Left Panel - Prompt Editor */}
+            <Box sx={{ flex: '0 0 400px', minWidth: 0 }}>
+              <Card sx={{ p: 3, position: 'sticky', top: 20 }}>
+                <Typography variant="h6" gutterBottom>
+                  Prompt Configuration
+                </Typography>
+
+                <Tabs
+                  value={promptTab}
+                  onChange={handlePromptTabChange}
+                  sx={{ mb: 2, borderBottom: 1, borderColor: 'divider' }}
                 >
-                  <MenuItem value="basic">Basic</MenuItem>
-                  <MenuItem value="detailed">Detailed</MenuItem>
-                </Select>
-              </FormControl>
+                  <Tab label="Basic" />
+                  <Tab label="Detailed" />
+                  <Tab label="Custom" />
+                </Tabs>
 
-              <Button
-                component="label"
-                variant="contained"
-                startIcon={<CloudUploadIcon />}
-                fullWidth
-                size="large"
-              >
-                Upload Image
-                <input
-                  type="file"
-                  hidden
-                  accept="image/*"
-                  onChange={handleImageSelect}
-                />
-              </Button>
-            </Box>
-
-            {imagePreview && (
-              <Card sx={{ mt: 3, mb: 3 }}>
-                <Box
-                  component="img"
+                <TextField
+                  multiline
+                  rows={16}
+                  fullWidth
+                  value={customPrompt}
+                  onChange={(e) => setCustomPrompt(e.target.value)}
+                  variant="outlined"
                   sx={{
-                    width: '100%',
-                    maxHeight: 400,
-                    objectFit: 'contain',
+                    mb: 2,
+                    '& .MuiOutlinedInput-root': {
+                      fontFamily: 'monospace',
+                      fontSize: '0.875rem',
+                    },
                   }}
-                  src={imagePreview}
-                  alt="Preview"
                 />
-                <CardContent>
-                  <Typography variant="body2" color="text.secondary">
-                    {selectedImage?.name}
-                  </Typography>
-                </CardContent>
-                <CardActions>
+
+                <Stack spacing={2}>
+                  <Box>
+                    <Typography variant="body2" color="text.secondary" gutterBottom>
+                      Selected: {selectedImages.length} / {filteredImages.length} images
+                    </Typography>
+                  </Box>
+
                   <Button
                     variant="contained"
-                    color="primary"
+                    size="large"
                     fullWidth
-                    onClick={handleClassify}
-                    disabled={loading}
+                    startIcon={<PlayArrowIcon />}
+                    onClick={handleRunExperiment}
+                    disabled={selectedImages.length === 0}
                   >
-                    {loading ? <CircularProgress size={24} /> : 'Classify Image'}
+                    Run Experiment
                   </Button>
-                </CardActions>
+                </Stack>
               </Card>
-            )}
+            </Box>
 
-            {error && (
-              <Alert severity="error" sx={{ mt: 2 }}>
-                {error}
-              </Alert>
-            )}
+            {/* Right Panel - Image Gallery */}
+            <Box sx={{ flex: 1, minWidth: 0 }}>
+              <Card sx={{ p: 3, mb: 3 }}>
+                <Stack direction="row" spacing={2} alignItems="center" justifyContent="space-between" flexWrap="wrap">
+                  <Stack direction="row" spacing={1}>
+                    <Chip
+                      label="All"
+                      onClick={() => setFilterType('all')}
+                      color={filterType === 'all' ? 'primary' : 'default'}
+                      variant={filterType === 'all' ? 'filled' : 'outlined'}
+                    />
+                    <Chip
+                      label="AI Generated"
+                      onClick={() => setFilterType('ai')}
+                      color={filterType === 'ai' ? 'error' : 'default'}
+                      variant={filterType === 'ai' ? 'filled' : 'outlined'}
+                      icon={filterType === 'ai' ? <CancelIcon /> : undefined}
+                    />
+                    <Chip
+                      label="Real Photos"
+                      onClick={() => setFilterType('real')}
+                      color={filterType === 'real' ? 'success' : 'default'}
+                      variant={filterType === 'real' ? 'filled' : 'outlined'}
+                      icon={filterType === 'real' ? <CheckCircleIcon /> : undefined}
+                    />
+                  </Stack>
 
-            {result && (
-              <Alert
-                severity={result.prediction === 'Yes' ? 'warning' : 'success'}
-                sx={{ mt: 2 }}
+                  <Stack direction="row" spacing={1}>
+                    <Button size="small" onClick={handleSelectAll} variant="outlined">
+                      Select All
+                    </Button>
+                    <Button size="small" onClick={handleDeselectAll} variant="outlined">
+                      Deselect All
+                    </Button>
+                  </Stack>
+                </Stack>
+              </Card>
+
+              {/* Image Grid */}
+              <Box
+                sx={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
+                  gap: 2,
+                }}
               >
-                <Typography variant="h6">
-                  {result.prediction === 'Yes'
-                    ? '🤖 AI-Generated'
-                    : '📸 Real Photograph'}
-                </Typography>
-                <Typography variant="body2">
-                  Prompt type: {result.promptType}
-                </Typography>
-              </Alert>
-            )}
-          </Paper>
+                {filteredImages.map((image) => (
+                  <Card
+                    key={image.id}
+                    onClick={() => handleImageSelect(image.id)}
+                    sx={{
+                      cursor: 'pointer',
+                      position: 'relative',
+                      border: selectedImages.includes(image.id) ? 3 : 1,
+                      borderColor: selectedImages.includes(image.id) ? 'primary.main' : 'divider',
+                      overflow: 'hidden',
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        position: 'relative',
+                        paddingTop: '100%',
+                        bgcolor: '#f1f5f9',
+                        overflow: 'hidden',
+                      }}
+                    >
+                      {/* Placeholder for actual image */}
+                      <Box
+                        sx={{
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          width: '100%',
+                          height: '100%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          bgcolor: image.groundTruth === 'ai' ? '#fef2f2' : '#f0fdf4',
+                        }}
+                      >
+                        <ImageIcon sx={{ fontSize: 48, color: '#cbd5e1' }} />
+                      </Box>
+
+                      {/* Ground Truth Badge */}
+                      <Chip
+                        label={image.groundTruth === 'ai' ? 'AI' : 'Real'}
+                        size="small"
+                        color={image.groundTruth === 'ai' ? 'error' : 'success'}
+                        sx={{
+                          position: 'absolute',
+                          top: 8,
+                          right: 8,
+                          fontWeight: 600,
+                          fontSize: '0.75rem',
+                        }}
+                      />
+
+                      {/* Selection Indicator */}
+                      {selectedImages.includes(image.id) && (
+                        <Box
+                          sx={{
+                            position: 'absolute',
+                            top: 8,
+                            left: 8,
+                            bgcolor: 'primary.main',
+                            color: 'white',
+                            borderRadius: '50%',
+                            width: 24,
+                            height: 24,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          }}
+                        >
+                          <CheckCircleIcon sx={{ fontSize: 20 }} />
+                        </Box>
+                      )}
+                    </Box>
+
+                    {/* Image Info */}
+                    <Box sx={{ p: 1.5 }}>
+                      <Tooltip title={image.fileName}>
+                        <Typography
+                          variant="caption"
+                          sx={{
+                            display: 'block',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                            color: 'text.secondary',
+                          }}
+                        >
+                          {image.fileName}
+                        </Typography>
+                      </Tooltip>
+                    </Box>
+                  </Card>
+                ))}
+              </Box>
+            </Box>
+          </Box>
         </Container>
       </Box>
     </ThemeProvider>
