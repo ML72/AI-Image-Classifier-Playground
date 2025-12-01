@@ -1,68 +1,121 @@
-# AI Image Classifier
+# AI Image Classification Playground
 
 A React web application that uses OpenAI's GPT-4o to classify images as AI-generated or real.
 
-## Features
+![Image Classification Examples](results/plots/image_grid_visualization.png)
 
-- 🎨 Modern React UI with Material-UI (MUI) components
-- 📸 Upload and preview images
-- 🤖 AI-powered image classification using GPT-4o Vision
-- 📊 Choose between basic and detailed analysis prompts
-- 📱 Responsive design
+## Prerequisites
+
+- **Node.js** (v18 or higher recommended)
+- **npm** (comes with Node.js)
+- **OpenAI API key** ([Get one here](https://platform.openai.com/api-keys))
 
 ## Setup
 
-1. Install dependencies:
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/ML72/AI-Image-Classifier-Playground.git
+cd AI-Image-Classifier-Playground
+```
+
+### 2. Install Dependencies
+
 ```bash
 npm install
 ```
 
-2. Set your OpenAI API key:
-```bash
+### 3. Configure OpenAI API Key
+
+Set your OpenAI API key as an environment variable:
+
+**Windows (Command Prompt):**
+```cmd
 set OPENAI_API_KEY=your-api-key-here
 ```
 
-## Running the App
+**Windows (PowerShell):**
+```powershell
+$env:OPENAI_API_KEY="your-api-key-here"
+```
 
-### Development Server
+**macOS/Linux:**
+```bash
+export OPENAI_API_KEY=your-api-key-here
+```
 
-Start the Vite development server:
+> **Note:** For persistent configuration, create a `.env` file in the project root:
+> ```
+> OPENAI_API_KEY=your-api-key-here
+> ```
+
+## Running the Application
+
+### Development Mode
+
+Start the Vite development server with hot-reload:
+
 ```bash
 npm run dev
 ```
 
-The app will open in your browser at `http://localhost:3000`.
+The app will automatically open in your browser at `http://localhost:3000`. Any changes you make to the code will be instantly reflected.
 
-### Build for Production
+### Production Build
 
 Create an optimized production build:
+
 ```bash
 npm run build
 ```
 
+The built files will be output to the `build/` directory.
+
 ### Preview Production Build
 
-Preview the production build locally:
+Test the production build locally before deployment:
+
 ```bash
 npm run preview
 ```
 
-### Command Line Tools
+## Command Line Tools
 
-Classify an image with the basic prompt:
+### Classify Individual Images
+
+Classify a single image using the CLI:
+
+**Basic prompt:**
 ```bash
-npm run classify images/real/photo.jpg basic
+npm run classify public/images/real/photo.jpg basic
 ```
 
-Classify with the detailed prompt:
+**Detailed prompt:**
 ```bash
-npm run classify images/ai/generated.png detailed
+npm run classify public/images/ai/generated.png detailed
 ```
 
-Run evaluation on a folder of images:
+### Batch Evaluation
+
+Run evaluation on multiple images in the `public/images/` directory:
+
 ```bash
 npm run eval
 ```
+
+This will generate prediction results in the `results/predictions/` directory.
+
+![Confusion Matrices](results/plots/confusion_matrices.png)
+
+### Visualize Results
+
+Visualize prediction results (requires Python):
+
+```bash
+python scripts/visualize_predictions.py
+```
+
+Charts will be saved to `results/plots/`.
 
 ## Prompts
 
@@ -91,10 +144,3 @@ The responses are strictly "Yes" (AI-generated) or "No" (real) for programmatic 
     ├── plots/             # Generated visualizations
     └── predictions/       # Prediction results
 ```
-
-## Technologies
-
-- **React** with TypeScript
-- **Material-UI (MUI)** for styling
-- **OpenAI GPT-4o Vision** for image classification
-- **Node.js** for backend scripts
