@@ -82,9 +82,9 @@ def create_grid_visualization(ai_images, real_images, output_path):
 def main():
     # Define paths
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    ai_folder = os.path.join(base_dir, 'data', 'images', 'ai')
-    real_folder = os.path.join(base_dir, 'data', 'images', 'real')
-    output_folder = os.path.join(base_dir, 'data', 'plots')
+    ai_folder = os.path.join(base_dir, 'public', 'images', 'ai')
+    real_folder = os.path.join(base_dir, 'public', 'images', 'real')
+    output_folder = os.path.join(base_dir, 'results', 'plots')
     output_path = os.path.join(output_folder, 'image_grid_visualization.png')
     
     # Create output folder if it doesn't exist

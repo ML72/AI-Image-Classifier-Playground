@@ -176,7 +176,7 @@ async function main() {
   };
 
   // Ensure output directory exists
-  const outputDir = path.join('data', 'predictions');
+  const outputDir = path.join('results', 'predictions');
   if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir, { recursive: true });
   }
