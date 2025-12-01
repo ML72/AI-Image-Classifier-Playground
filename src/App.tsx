@@ -224,9 +224,9 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh', bgcolor: 'background.default' }}>
         {/* Header */}
-        <AppBar position="static" elevation={0} sx={{ bgcolor: 'white', borderBottom: '1px solid #e5e7eb' }}>
+        <AppBar position="static" elevation={0} sx={{ bgcolor: 'white', borderBottom: '1px solid #e5e7eb', flexShrink: 0 }}>
           <Toolbar sx={{ py: 1 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
               <ImageIcon sx={{ fontSize: 28, color: 'primary.main' }} />
@@ -237,26 +237,41 @@ function App() {
           </Toolbar>
         </AppBar>
 
-        <Container maxWidth="xl" sx={{ py: 4 }}>
-          {/* Page Title */}
-          <Box sx={{ mb: 4 }}>
-            <Typography variant="h4" gutterBottom>
-              Image Classification Experiment
-            </Typography>
-            <Typography variant="body1" color="text.secondary">
-              Select test images and configure your prompt to classify AI-generated vs. real photographs
-            </Typography>
-          </Box>
+        <Box sx={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+          {/* Left Panel - Prompt Editor */}
+          <Box sx={{ 
+            width: 400, 
+            flexShrink: 0,
+            borderRight: '1px solid #e5e7eb',
+            bgcolor: 'white',
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden',
+          }}>
+            <Box sx={{ 
+              flex: 1, 
+              overflowY: 'auto',
+              overflowX: 'hidden',
+              p: 3,
+              '&::-webkit-scrollbar': {
+                width: '8px',
+              },
+              '&::-webkit-scrollbar-track': {
+                background: 'transparent',
+              },
+              '&::-webkit-scrollbar-thumb': {
+                background: '#cbd5e1',
+                borderRadius: '10px',
+                '&:hover': {
+                  background: '#94a3b8',
+                },
+              },
+            }}>
+              <Typography variant="h6" gutterBottom sx={{ mb: 3 }}>
+                Prompt Configuration
+              </Typography>
 
-          <Box sx={{ display: 'flex', gap: 3, flexDirection: { xs: 'column', lg: 'row' } }}>
-            {/* Left Panel - Prompt Editor */}
-            <Box sx={{ flex: '0 0 400px', minWidth: 0 }}>
-              <Card sx={{ p: 3, position: 'sticky', top: 20 }}>
-                <Typography variant="h6" gutterBottom sx={{ mb: 3 }}>
-                  Prompt Configuration
-                </Typography>
-
-                <Box sx={{ position: 'relative', mb: 2 }}>
+              <Box sx={{ position: 'relative', mb: 2 }}>
                   <TextField
                     multiline
                     rows={16}
@@ -475,12 +490,23 @@ function App() {
                     </Card>
                   )}
                 </Stack>
-              </Card>
+              </Box>
             </Box>
 
             {/* Right Panel - Image Gallery */}
-            <Box sx={{ flex: 1, minWidth: 0 }}>
-              <Card sx={{ p: 3, mb: 3 }}>
+            <Box sx={{ flex: 1, overflowY: 'auto', bgcolor: 'background.default' }}>
+              <Container maxWidth="xl" sx={{ py: 4 }}>
+                {/* Page Title */}
+                <Box sx={{ mb: 4 }}>
+                  <Typography variant="h4" gutterBottom>
+                    Image Classification Experiment
+                  </Typography>
+                  <Typography variant="body1" color="text.secondary">
+                    Select test images and configure your prompt to classify AI-generated vs. real photographs
+                  </Typography>
+                </Box>
+
+                <Card sx={{ p: 3, mb: 3 }}>
                 <Stack direction="row" spacing={2} alignItems="center" justifyContent="space-between" flexWrap="wrap">
                   <Stack direction="row" spacing={1}>
                     <Chip
@@ -616,9 +642,9 @@ function App() {
                   </Card>
                 ))}
               </Box>
+              </Container>
             </Box>
           </Box>
-        </Container>
 
         {/* API Key Dialog */}
         <Dialog 
