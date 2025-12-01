@@ -89,22 +89,33 @@ function App() {
   const [filterType, setFilterType] = useState<'all' | 'ai' | 'real'>('all');
   const [promptTab, setPromptTab] = useState(0);
 
-  // Mock test images - in real implementation, these would be loaded from the data/images folder
+  // Real test images loaded from public/images folder
   const testImages: TestImage[] = [
-    // AI images
-    ...Array.from({ length: 50 }, (_, i) => ({
-      id: `ai-${i}`,
-      url: `data/images/ai/image_${i}.jpg`,
+    // AI images - diffusion models
+    ...['diffusion1', 'diffusion2', 'diffusion3', 'diffusion4'].flatMap((type) =>
+      Array.from({ length: 10 }, (_, i) => ({
+        id: `${type}_${i + 1}`,
+        url: `/images/ai/${type}_${i + 1}.jpg`,
+        groundTruth: 'ai' as const,
+        fileName: `${type}_${i + 1}.jpg`,
+      }))
+    ),
+    // AI images - GAN
+    ...Array.from({ length: 10 }, (_, i) => ({
+      id: `gan_${i + 1}`,
+      url: `/images/ai/gan_${i + 1}.jpg`,
       groundTruth: 'ai' as const,
-      fileName: `ai_image_${i}.jpg`,
+      fileName: `gan_${i + 1}.jpg`,
     })),
-    // Real images
-    ...Array.from({ length: 50 }, (_, i) => ({
-      id: `real-${i}`,
-      url: `data/images/real/image_${i}.jpg`,
-      groundTruth: 'real' as const,
-      fileName: `real_image_${i}.jpg`,
-    })),
+    // Real images - various categories
+    ...['animals', 'city', 'food', 'nature', 'people'].flatMap((category) =>
+      Array.from({ length: 10 }, (_, i) => ({
+        id: `${category}_${i + 1}`,
+        url: `/images/real/${category}_${i + 1}.jpg`,
+        groundTruth: 'real' as const,
+        fileName: `${category}_${i + 1}.jpg`,
+      }))
+    ),
   ];
 
   const filteredImages = testImages.filter((img) => {
@@ -293,22 +304,21 @@ function App() {
                         overflow: 'hidden',
                       }}
                     >
-                      {/* Placeholder for actual image */}
+                      {/* Actual image */}
                       <Box
+                        component="img"
+                        src={image.url}
+                        alt={image.fileName}
                         sx={{
                           position: 'absolute',
                           top: 0,
                           left: 0,
                           width: '100%',
                           height: '100%',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          bgcolor: image.groundTruth === 'ai' ? '#fef2f2' : '#f0fdf4',
+                          objectFit: 'cover',
                         }}
-                      >
-                        <ImageIcon sx={{ fontSize: 48, color: '#cbd5e1' }} />
-                      </Box>
+                        loading="lazy"
+                      />
 
                       {/* Ground Truth Badge */}
                       <Chip
