@@ -20,13 +20,26 @@ import {
   Alert,
   AlertTitle,
   Link,
+  CircularProgress,
+  LinearProgress,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Divider,
 } from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import ImageIcon from '@mui/icons-material/Image';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import KeyIcon from '@mui/icons-material/Key';
+import BarChartIcon from '@mui/icons-material/BarChart';
+import ErrorIcon from '@mui/icons-material/Error';
 import { prompts } from './util/prompts';
+import { BrowserImageClassifier, ExperimentResults } from './util/browser_classifier';
 import './App.css';
 
 const theme = createTheme({
@@ -126,6 +139,11 @@ function App() {
   const [openApiKey, setOpenApiKey] = useState('');
   const [apiKeyDialogOpen, setApiKeyDialogOpen] = useState(false);
   const [tempApiKey, setTempApiKey] = useState('');
+  const [isRunningExperiment, setIsRunningExperiment] = useState(false);
+  const [experimentProgress, setExperimentProgress] = useState({ current: 0, total: 0 });
+  const [experimentResults, setExperimentResults] = useState<ExperimentResults | null>(null);
+  const [experimentError, setExperimentError] = useState<string | null>(null);
+  const [resultsDialogOpen, setResultsDialogOpen] = useState(false);
 
   // Handlers and utilities
   const filteredImages = testImages.filter((img) => {
@@ -149,12 +167,33 @@ function App() {
     );
   };
 
-  const handleRunExperiment = () => {
-    // TODO: Implement experiment execution
-    console.log('Running experiment with:', {
-      prompt: customPrompt,
-      selectedImages: selectedImages.length > 0 ? selectedImages : 'all images',
-    });
+  const handleRunExperiment = async () => {
+    if (!openApiKey || selectedImages.length === 0) return;
+
+    setIsRunningExperiment(true);
+    setExperimentError(null);
+    setExperimentResults(null);
+    setExperimentProgress({ current: 0, total: selectedImages.length });
+
+    try {
+      const classifier = new BrowserImageClassifier(openApiKey);
+      const selectedTestImages = testImages.filter(img => selectedImages.includes(img.id));
+
+      const results = await classifier.runExperiment(
+        selectedTestImages,
+        customPrompt,
+        1000, // 1 second delay between API calls
+        (current, total) => {
+          setExperimentProgress({ current, total });
+        }
+      );
+
+      setExperimentResults(results);
+    } catch (error) {
+      setExperimentError(error instanceof Error ? error.message : 'An unknown error occurred');
+    } finally {
+      setIsRunningExperiment(false);
+    }
   };
 
   const handleSelectAll = () => {
@@ -314,12 +353,127 @@ function App() {
                     variant="contained"
                     size="large"
                     fullWidth
-                    startIcon={<PlayArrowIcon />}
+                    startIcon={isRunningExperiment ? <CircularProgress size={20} color="inherit" /> : <PlayArrowIcon />}
                     onClick={handleRunExperiment}
-                    disabled={selectedImages.length === 0 || !openApiKey}
+                    disabled={selectedImages.length === 0 || !openApiKey || isRunningExperiment}
                   >
-                    Run Experiment
+                    {isRunningExperiment ? `Processing ${experimentProgress.current}/${experimentProgress.total}...` : 'Run Experiment'}
                   </Button>
+
+                  {/* Progress Bar */}
+                  {isRunningExperiment && (
+                    <LinearProgress 
+                      variant="determinate" 
+                      value={(experimentProgress.current / experimentProgress.total) * 100} 
+                      sx={{ borderRadius: 1 }}
+                    />
+                  )}
+
+                  {/* Error Display */}
+                  {experimentError && (
+                    <Alert severity="error" sx={{ fontSize: '0.875rem' }}>
+                      <AlertTitle sx={{ fontSize: '0.875rem', fontWeight: 600 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                          <ErrorIcon fontSize="small" />
+                          Error Running Experiment
+                        </Box>
+                      </AlertTitle>
+                      {experimentError}
+                    </Alert>
+                  )}
+
+                  {/* Results Summary */}
+                  {experimentResults && (
+                    <Card variant="outlined" sx={{ p: 2, bgcolor: 'background.default' }}>
+                      <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 600, mb: 2 }}>
+                        Experiment Results
+                      </Typography>
+
+                      <Stack spacing={1.5}>
+                        {/* Accuracy */}
+                        <Box>
+                          <Typography variant="caption" color="text.secondary" display="block">
+                            Accuracy
+                          </Typography>
+                          <Typography variant="h5" sx={{ fontWeight: 700, color: 'primary.main' }}>
+                            {(experimentResults.accuracy * 100).toFixed(1)}%
+                          </Typography>
+                        </Box>
+
+                        <Divider />
+
+                        {/* Stats */}
+                        <Box>
+                          <Stack direction="row" justifyContent="space-between" sx={{ mb: 0.5 }}>
+                            <Typography variant="caption" color="text.secondary">Correct</Typography>
+                            <Typography variant="body2" sx={{ fontWeight: 600, color: 'success.main' }}>
+                              {experimentResults.correct}
+                            </Typography>
+                          </Stack>
+                          <Stack direction="row" justifyContent="space-between" sx={{ mb: 0.5 }}>
+                            <Typography variant="caption" color="text.secondary">Incorrect</Typography>
+                            <Typography variant="body2" sx={{ fontWeight: 600, color: 'error.main' }}>
+                              {experimentResults.incorrect}
+                            </Typography>
+                          </Stack>
+                          {experimentResults.unsure > 0 && (
+                            <Stack direction="row" justifyContent="space-between">
+                              <Typography variant="caption" color="text.secondary">Unsure</Typography>
+                              <Typography variant="body2" sx={{ fontWeight: 600, color: 'warning.main' }}>
+                                {experimentResults.unsure}
+                              </Typography>
+                            </Stack>
+                          )}
+                        </Box>
+
+                        <Divider />
+
+                        {/* Confusion Matrix Summary */}
+                        <Box>
+                          <Typography variant="caption" color="text.secondary" display="block" gutterBottom>
+                            Confusion Matrix
+                          </Typography>
+                          <Stack spacing={0.5} sx={{ fontSize: '0.75rem' }}>
+                            <Stack direction="row" justifyContent="space-between">
+                              <Typography variant="caption">True Positive (AI→AI)</Typography>
+                              <Typography variant="caption" sx={{ fontWeight: 600 }}>
+                                {experimentResults.confusionMatrix.truePositive}
+                              </Typography>
+                            </Stack>
+                            <Stack direction="row" justifyContent="space-between">
+                              <Typography variant="caption">True Negative (Real→Real)</Typography>
+                              <Typography variant="caption" sx={{ fontWeight: 600 }}>
+                                {experimentResults.confusionMatrix.trueNegative}
+                              </Typography>
+                            </Stack>
+                            <Stack direction="row" justifyContent="space-between">
+                              <Typography variant="caption">False Positive (Real→AI)</Typography>
+                              <Typography variant="caption" sx={{ fontWeight: 600 }}>
+                                {experimentResults.confusionMatrix.falsePositive}
+                              </Typography>
+                            </Stack>
+                            <Stack direction="row" justifyContent="space-between">
+                              <Typography variant="caption">False Negative (AI→Real)</Typography>
+                              <Typography variant="caption" sx={{ fontWeight: 600 }}>
+                                {experimentResults.confusionMatrix.falseNegative}
+                              </Typography>
+                            </Stack>
+                          </Stack>
+                        </Box>
+
+                        <Button
+                          variant="outlined"
+                          size="small"
+                          fullWidth
+                          startIcon={<BarChartIcon />}
+                          onClick={() => setResultsDialogOpen(true)}
+                          sx={{ mt: 1 }}
+                        >
+                          View Detailed Results
+                        </Button>
+                      </Stack>
+                    </Card>
+                  )}
                 </Stack>
               </Card>
             </Box>
@@ -525,6 +679,199 @@ function App() {
               disabled={!tempApiKey.trim()}
             >
               Save API Key
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        {/* Detailed Results Dialog */}
+        <Dialog
+          open={resultsDialogOpen}
+          onClose={() => setResultsDialogOpen(false)}
+          maxWidth="lg"
+          fullWidth
+        >
+          <DialogTitle>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <BarChartIcon />
+              Detailed Experiment Results
+            </Box>
+          </DialogTitle>
+          <DialogContent>
+            {experimentResults && (
+              <>
+                {/* Summary Stats */}
+                <Box sx={{ mb: 3 }}>
+                  <Typography variant="h6" gutterBottom>
+                    Summary
+                  </Typography>
+                  <Stack direction="row" spacing={3}>
+                    <Card variant="outlined" sx={{ flex: 1, p: 2 }}>
+                      <Typography variant="caption" color="text.secondary">Accuracy</Typography>
+                      <Typography variant="h4" sx={{ color: 'primary.main', fontWeight: 700 }}>
+                        {(experimentResults.accuracy * 100).toFixed(1)}%
+                      </Typography>
+                    </Card>
+                    <Card variant="outlined" sx={{ flex: 1, p: 2 }}>
+                      <Typography variant="caption" color="text.secondary">Total Images</Typography>
+                      <Typography variant="h4" sx={{ fontWeight: 700 }}>
+                        {experimentResults.totalImages}
+                      </Typography>
+                    </Card>
+                    <Card variant="outlined" sx={{ flex: 1, p: 2 }}>
+                      <Typography variant="caption" color="text.secondary">Correct</Typography>
+                      <Typography variant="h4" sx={{ color: 'success.main', fontWeight: 700 }}>
+                        {experimentResults.correct}
+                      </Typography>
+                    </Card>
+                    <Card variant="outlined" sx={{ flex: 1, p: 2 }}>
+                      <Typography variant="caption" color="text.secondary">Incorrect</Typography>
+                      <Typography variant="h4" sx={{ color: 'error.main', fontWeight: 700 }}>
+                        {experimentResults.incorrect}
+                      </Typography>
+                    </Card>
+                  </Stack>
+                </Box>
+
+                {/* Confusion Matrix */}
+                <Box sx={{ mb: 3 }}>
+                  <Typography variant="h6" gutterBottom>
+                    Confusion Matrix
+                  </Typography>
+                  <TableContainer component={Paper} variant="outlined">
+                    <Table size="small">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell></TableCell>
+                          <TableCell align="center" sx={{ fontWeight: 600 }}>Predicted AI</TableCell>
+                          <TableCell align="center" sx={{ fontWeight: 600 }}>Predicted Real</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        <TableRow>
+                          <TableCell sx={{ fontWeight: 600 }}>Actual AI</TableCell>
+                          <TableCell align="center" sx={{ bgcolor: 'success.light', color: 'success.contrastText' }}>
+                            {experimentResults.confusionMatrix.truePositive}
+                          </TableCell>
+                          <TableCell align="center" sx={{ bgcolor: 'error.light', color: 'error.contrastText' }}>
+                            {experimentResults.confusionMatrix.falseNegative}
+                          </TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell sx={{ fontWeight: 600 }}>Actual Real</TableCell>
+                          <TableCell align="center" sx={{ bgcolor: 'error.light', color: 'error.contrastText' }}>
+                            {experimentResults.confusionMatrix.falsePositive}
+                          </TableCell>
+                          <TableCell align="center" sx={{ bgcolor: 'success.light', color: 'success.contrastText' }}>
+                            {experimentResults.confusionMatrix.trueNegative}
+                          </TableCell>
+                        </TableRow>
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </Box>
+
+                {/* Individual Results */}
+                <Box>
+                  <Typography variant="h6" gutterBottom>
+                    Individual Classifications
+                  </Typography>
+                  
+                  {/* Correct Predictions */}
+                  <Box sx={{ mb: 2 }}>
+                    <Typography variant="subtitle2" sx={{ mb: 1, color: 'success.main', fontWeight: 600 }}>
+                      ✓ Correct ({experimentResults.correct})
+                    </Typography>
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                      {experimentResults.results
+                        .filter(r => r.correct && r.prediction !== 'Unsure')
+                        .map(result => (
+                          <Chip
+                            key={result.imageId}
+                            label={result.fileName}
+                            size="small"
+                            color="success"
+                            variant="outlined"
+                            sx={{ fontSize: '0.75rem' }}
+                          />
+                        ))}
+                    </Box>
+                  </Box>
+
+                  {/* Incorrect Predictions */}
+                  <Box sx={{ mb: 2 }}>
+                    <Typography variant="subtitle2" sx={{ mb: 1, color: 'error.main', fontWeight: 600 }}>
+                      ✗ Incorrect ({experimentResults.incorrect})
+                    </Typography>
+                    <TableContainer component={Paper} variant="outlined">
+                      <Table size="small">
+                        <TableHead>
+                          <TableRow>
+                            <TableCell>Image</TableCell>
+                            <TableCell>Ground Truth</TableCell>
+                            <TableCell>Prediction</TableCell>
+                            <TableCell>Raw Response</TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {experimentResults.results
+                            .filter(r => !r.correct && r.prediction !== 'Unsure')
+                            .map(result => (
+                              <TableRow key={result.imageId}>
+                                <TableCell>{result.fileName}</TableCell>
+                                <TableCell>
+                                  <Chip
+                                    label={result.groundTruth === 'ai' ? 'AI' : 'Real'}
+                                    size="small"
+                                    color={result.groundTruth === 'ai' ? 'error' : 'success'}
+                                  />
+                                </TableCell>
+                                <TableCell>
+                                  <Chip
+                                    label={result.prediction}
+                                    size="small"
+                                    color={result.prediction === 'Yes' ? 'error' : 'success'}
+                                  />
+                                </TableCell>
+                                <TableCell sx={{ fontFamily: 'monospace', fontSize: '0.75rem' }}>
+                                  {result.rawResponse}
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                  </Box>
+
+                  {/* Unsure Predictions */}
+                  {experimentResults.unsure > 0 && (
+                    <Box>
+                      <Typography variant="subtitle2" sx={{ mb: 1, color: 'warning.main', fontWeight: 600 }}>
+                        ? Unsure ({experimentResults.unsure})
+                      </Typography>
+                      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                        {experimentResults.results
+                          .filter(r => r.prediction === 'Unsure')
+                          .map(result => (
+                            <Tooltip key={result.imageId} title={result.error || 'No response'}>
+                              <Chip
+                                label={result.fileName}
+                                size="small"
+                                color="warning"
+                                variant="outlined"
+                                sx={{ fontSize: '0.75rem' }}
+                              />
+                            </Tooltip>
+                          ))}
+                      </Box>
+                    </Box>
+                  )}
+                </Box>
+              </>
+            )}
+          </DialogContent>
+          <DialogActions sx={{ px: 3, pb: 3 }}>
+            <Button onClick={() => setResultsDialogOpen(false)} variant="contained">
+              Close
             </Button>
           </DialogActions>
         </Dialog>
