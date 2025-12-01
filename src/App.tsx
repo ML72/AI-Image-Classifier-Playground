@@ -15,11 +15,19 @@ import {
   Tabs,
   Tab,
   Tooltip,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Alert,
+  AlertTitle,
+  Link,
 } from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import ImageIcon from '@mui/icons-material/Image';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
+import KeyIcon from '@mui/icons-material/Key';
 import { prompts } from './util/prompts';
 import './App.css';
 
@@ -88,6 +96,9 @@ function App() {
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
   const [filterType, setFilterType] = useState<'all' | 'ai' | 'real'>('all');
   const [promptTab, setPromptTab] = useState(0);
+  const [openApiKey, setOpenApiKey] = useState('');
+  const [apiKeyDialogOpen, setApiKeyDialogOpen] = useState(false);
+  const [tempApiKey, setTempApiKey] = useState('');
 
   // Real test images loaded from public/images folder
   const testImages: TestImage[] = [
@@ -154,6 +165,22 @@ function App() {
 
   const handleDeselectAll = () => {
     setSelectedImages([]);
+  };
+
+  const handleOpenApiKeyDialog = () => {
+    setTempApiKey(openApiKey);
+    setApiKeyDialogOpen(true);
+  };
+
+  const handleCloseApiKeyDialog = () => {
+    setApiKeyDialogOpen(false);
+    setTempApiKey('');
+  };
+
+  const handleSaveApiKey = () => {
+    setOpenApiKey(tempApiKey);
+    setApiKeyDialogOpen(false);
+    setTempApiKey('');
   };
 
   return (
@@ -224,13 +251,31 @@ function App() {
                     </Typography>
                   </Box>
 
+                  {!openApiKey && (
+                    <Alert severity="info" sx={{ fontSize: '0.875rem' }}>
+                      <AlertTitle sx={{ fontSize: '0.875rem', fontWeight: 600 }}>API Key Required</AlertTitle>
+                      Set your OpenAI API key to run experiments
+                    </Alert>
+                  )}
+
+                  <Button
+                    variant={openApiKey ? 'outlined' : 'contained'}
+                    color={openApiKey ? 'success' : 'primary'}
+                    size="large"
+                    fullWidth
+                    startIcon={<KeyIcon />}
+                    onClick={handleOpenApiKeyDialog}
+                  >
+                    {openApiKey ? 'API Key Set' : 'Set API Key'}
+                  </Button>
+
                   <Button
                     variant="contained"
                     size="large"
                     fullWidth
                     startIcon={<PlayArrowIcon />}
                     onClick={handleRunExperiment}
-                    disabled={selectedImages.length === 0}
+                    disabled={selectedImages.length === 0 || !openApiKey}
                   >
                     Run Experiment
                   </Button>
@@ -379,6 +424,69 @@ function App() {
             </Box>
           </Box>
         </Container>
+
+        {/* API Key Dialog */}
+        <Dialog 
+          open={apiKeyDialogOpen} 
+          onClose={handleCloseApiKeyDialog}
+          maxWidth="sm"
+          fullWidth
+        >
+          <DialogTitle>
+            OpenAI API Key
+          </DialogTitle>
+          <DialogContent>
+            <Alert severity="info" sx={{ mb: 3 }}>
+              <AlertTitle>Why is this needed?</AlertTitle>
+              This application uses GPT-4o Vision to classify images as AI-generated or real. Your API key is required to authenticate requests to OpenAI.
+            </Alert>
+
+            <Alert severity="success" sx={{ mb: 3 }}>
+              <AlertTitle>Privacy & Security</AlertTitle>
+              Your API key is stored only in your browser's memory (local state) and is never sent to any server except OpenAI's API. 
+              It will be cleared when you close or refresh the page.
+            </Alert>
+
+            <Alert severity="warning" sx={{ mb: 3 }}>
+              <AlertTitle>Open Source</AlertTitle>
+              This application is fully open source. You can review the code at{' '}
+              <Link 
+                href="https://github.com/ML72/AI-Image-Classifier-Playground" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                sx={{ fontWeight: 600 }}
+              >
+                github.com/ML72/AI-Image-Classifier-Playground
+              </Link>
+              {' '}to verify how your API key is handled.
+            </Alert>
+
+            <TextField
+              autoFocus
+              margin="dense"
+              label="OpenAI API Key"
+              type="password"
+              fullWidth
+              variant="outlined"
+              value={tempApiKey}
+              onChange={(e) => setTempApiKey(e.target.value)}
+              placeholder="sk-..."
+              helperText="Get your API key from platform.openai.com"
+            />
+          </DialogContent>
+          <DialogActions sx={{ px: 3, pb: 3 }}>
+            <Button onClick={handleCloseApiKeyDialog} color="inherit">
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleSaveApiKey} 
+              variant="contained"
+              disabled={!tempApiKey.trim()}
+            >
+              Save API Key
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Box>
     </ThemeProvider>
   );
