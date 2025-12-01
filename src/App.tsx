@@ -90,14 +90,7 @@ interface TestImage {
 }
 
 function App() {
-  const [customPrompt, setCustomPrompt] = useState(prompts.basic);
-  const [selectedImages, setSelectedImages] = useState<string[]>([]);
-  const [filterType, setFilterType] = useState<'all' | 'ai' | 'real'>('all');
-  const [openApiKey, setOpenApiKey] = useState('');
-  const [apiKeyDialogOpen, setApiKeyDialogOpen] = useState(false);
-  const [tempApiKey, setTempApiKey] = useState('');
-
-  // Real test images loaded from public/images folder
+  // Load in test images from public/images folder
   const testImages: TestImage[] = [
     // AI images - diffusion models
     ...['diffusion1', 'diffusion2', 'diffusion3', 'diffusion4'].flatMap((type) =>
@@ -126,6 +119,15 @@ function App() {
     ),
   ];
 
+  // Initialize state
+  const [customPrompt, setCustomPrompt] = useState(prompts.basic);
+  const [selectedImages, setSelectedImages] = useState<string[]>(testImages.map((img) => img.id));
+  const [filterType, setFilterType] = useState<'all' | 'ai' | 'real'>('all');
+  const [openApiKey, setOpenApiKey] = useState('');
+  const [apiKeyDialogOpen, setApiKeyDialogOpen] = useState(false);
+  const [tempApiKey, setTempApiKey] = useState('');
+
+  // Handlers and utilities
   const filteredImages = testImages.filter((img) => {
     if (filterType === 'all') return true;
     return img.groundTruth === filterType;
@@ -179,6 +181,7 @@ function App() {
     setTempApiKey('');
   };
 
+  // Main render
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
