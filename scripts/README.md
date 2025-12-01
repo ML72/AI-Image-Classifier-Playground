@@ -11,11 +11,11 @@ To reproduce our experiments:
 2. Generate predictions with both prompts for both classes of images:
 
     ```
-    npx tsx scripts/generate_predictions.ts data/images/real img_real-prompt_basic basic
-    npx tsx sscriptsrc/generate_predictions.ts data/images/real img_real-prompt_detailed detailed
+    npx tsx scripts/generate_predictions.ts public/images/real img_real-prompt_basic basic
+    npx tsx sscriptsrc/generate_predictions.ts public/images/real img_real-prompt_detailed detailed
 
-    npx tsx scripts/generate_predictions.ts data/images/ai img_ai-prompt_basic basic
-    npx tsx scripts/generate_predictions.ts data/images/ai img_ai-prompt_detailed detailed
+    npx tsx scripts/generate_predictions.ts public/images/ai img_ai-prompt_basic basic
+    npx tsx scripts/generate_predictions.ts public/images/ai img_ai-prompt_detailed detailed
     ```
 
 3. Make sure you are in a Python environment with `matplotlib` and `numpy` installed. Then generate visualizations:

@@ -1,7 +1,7 @@
 """
 Visualize predictions from AI image classifier experiments.
 
-There must be existing prediction JSON files in the data/predictions/ directory.
+There must be existing prediction JSON files in the results/predictions/ directory.
 """
 
 import json
@@ -152,8 +152,8 @@ def main():
     # Get the project root directory
     script_dir = Path(__file__).parent
     project_root = script_dir.parent
-    predictions_dir = project_root / 'data' / 'predictions'
-    plots_dir = project_root / 'data' / 'plots'
+    predictions_dir = project_root / 'results' / 'predictions'
+    plots_dir = project_root / 'results' / 'plots'
     
     # Create plots directory if it doesn't exist
     plots_dir.mkdir(parents=True, exist_ok=True)
