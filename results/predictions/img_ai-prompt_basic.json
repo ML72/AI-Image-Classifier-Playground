@@ -1,306 +1,306 @@
 {
   "experimentName": "img_ai-prompt_basic",
-  "folderPath": "data/images/ai",
+  "folderPath": "public/images/ai",
   "promptType": "basic",
   "timestamp": "2025-11-30T07:36:08.819Z",
   "predictions": [
     {
       "filename": "diffusion1_1.jpg",
-      "path": "data\\images\\ai\\diffusion1_1.jpg",
+      "path": "public\\images\\ai\\diffusion1_1.jpg",
       "prediction": "No",
       "rawResponse": "No"
     },
     {
       "filename": "diffusion1_10.jpg",
-      "path": "data\\images\\ai\\diffusion1_10.jpg",
+      "path": "public\\images\\ai\\diffusion1_10.jpg",
       "prediction": "No",
       "rawResponse": "No"
     },
     {
       "filename": "diffusion1_2.jpg",
-      "path": "data\\images\\ai\\diffusion1_2.jpg",
+      "path": "public\\images\\ai\\diffusion1_2.jpg",
       "prediction": "No",
       "rawResponse": "No"
     },
     {
       "filename": "diffusion1_3.jpg",
-      "path": "data\\images\\ai\\diffusion1_3.jpg",
+      "path": "public\\images\\ai\\diffusion1_3.jpg",
       "prediction": "No",
       "rawResponse": "No"
     },
     {
       "filename": "diffusion1_4.jpg",
-      "path": "data\\images\\ai\\diffusion1_4.jpg",
+      "path": "public\\images\\ai\\diffusion1_4.jpg",
       "prediction": "No",
       "rawResponse": "No"
     },
     {
       "filename": "diffusion1_5.jpg",
-      "path": "data\\images\\ai\\diffusion1_5.jpg",
+      "path": "public\\images\\ai\\diffusion1_5.jpg",
       "prediction": "No",
       "rawResponse": "No"
     },
     {
       "filename": "diffusion1_6.jpg",
-      "path": "data\\images\\ai\\diffusion1_6.jpg",
+      "path": "public\\images\\ai\\diffusion1_6.jpg",
       "prediction": "No",
       "rawResponse": "No"
     },
     {
       "filename": "diffusion1_7.jpg",
-      "path": "data\\images\\ai\\diffusion1_7.jpg",
+      "path": "public\\images\\ai\\diffusion1_7.jpg",
       "prediction": "Yes",
       "rawResponse": "Yes"
     },
     {
       "filename": "diffusion1_8.jpg",
-      "path": "data\\images\\ai\\diffusion1_8.jpg",
+      "path": "public\\images\\ai\\diffusion1_8.jpg",
       "prediction": "Yes",
       "rawResponse": "Yes"
     },
     {
       "filename": "diffusion1_9.jpg",
-      "path": "data\\images\\ai\\diffusion1_9.jpg",
+      "path": "public\\images\\ai\\diffusion1_9.jpg",
       "prediction": "No",
       "rawResponse": "No"
     },
     {
       "filename": "diffusion2_1.jpg",
-      "path": "data\\images\\ai\\diffusion2_1.jpg",
+      "path": "public\\images\\ai\\diffusion2_1.jpg",
       "prediction": "No",
       "rawResponse": "No"
     },
     {
       "filename": "diffusion2_10.jpg",
-      "path": "data\\images\\ai\\diffusion2_10.jpg",
+      "path": "public\\images\\ai\\diffusion2_10.jpg",
       "prediction": "Yes",
       "rawResponse": "Yes"
     },
     {
       "filename": "diffusion2_2.jpg",
-      "path": "data\\images\\ai\\diffusion2_2.jpg",
+      "path": "public\\images\\ai\\diffusion2_2.jpg",
       "prediction": "Yes",
       "rawResponse": "Yes"
     },
     {
       "filename": "diffusion2_3.jpg",
-      "path": "data\\images\\ai\\diffusion2_3.jpg",
+      "path": "public\\images\\ai\\diffusion2_3.jpg",
       "prediction": "Yes",
       "rawResponse": "Yes"
     },
     {
       "filename": "diffusion2_4.jpg",
-      "path": "data\\images\\ai\\diffusion2_4.jpg",
+      "path": "public\\images\\ai\\diffusion2_4.jpg",
       "prediction": "No",
       "rawResponse": "No"
     },
     {
       "filename": "diffusion2_5.jpg",
-      "path": "data\\images\\ai\\diffusion2_5.jpg",
+      "path": "public\\images\\ai\\diffusion2_5.jpg",
       "prediction": "Yes",
       "rawResponse": "Yes"
     },
     {
       "filename": "diffusion2_6.jpg",
-      "path": "data\\images\\ai\\diffusion2_6.jpg",
+      "path": "public\\images\\ai\\diffusion2_6.jpg",
       "prediction": "No",
       "rawResponse": "No"
     },
     {
       "filename": "diffusion2_7.jpg",
-      "path": "data\\images\\ai\\diffusion2_7.jpg",
+      "path": "public\\images\\ai\\diffusion2_7.jpg",
       "prediction": "No",
       "rawResponse": "No"
     },
     {
       "filename": "diffusion2_8.jpg",
-      "path": "data\\images\\ai\\diffusion2_8.jpg",
+      "path": "public\\images\\ai\\diffusion2_8.jpg",
       "prediction": "Yes",
       "rawResponse": "Yes"
     },
     {
       "filename": "diffusion2_9.jpg",
-      "path": "data\\images\\ai\\diffusion2_9.jpg",
+      "path": "public\\images\\ai\\diffusion2_9.jpg",
       "prediction": "Yes",
       "rawResponse": "Yes"
     },
     {
       "filename": "diffusion3_1.jpg",
-      "path": "data\\images\\ai\\diffusion3_1.jpg",
+      "path": "public\\images\\ai\\diffusion3_1.jpg",
       "prediction": "No",
       "rawResponse": "No"
     },
     {
       "filename": "diffusion3_10.jpg",
-      "path": "data\\images\\ai\\diffusion3_10.jpg",
+      "path": "public\\images\\ai\\diffusion3_10.jpg",
       "prediction": "Yes",
       "rawResponse": "Yes"
     },
     {
       "filename": "diffusion3_2.jpg",
-      "path": "data\\images\\ai\\diffusion3_2.jpg",
+      "path": "public\\images\\ai\\diffusion3_2.jpg",
       "prediction": "No",
       "rawResponse": "No"
     },
     {
       "filename": "diffusion3_3.jpg",
-      "path": "data\\images\\ai\\diffusion3_3.jpg",
+      "path": "public\\images\\ai\\diffusion3_3.jpg",
       "prediction": "No",
       "rawResponse": "No"
     },
     {
       "filename": "diffusion3_4.jpg",
-      "path": "data\\images\\ai\\diffusion3_4.jpg",
+      "path": "public\\images\\ai\\diffusion3_4.jpg",
       "prediction": "No",
       "rawResponse": "No"
     },
     {
       "filename": "diffusion3_5.jpg",
-      "path": "data\\images\\ai\\diffusion3_5.jpg",
+      "path": "public\\images\\ai\\diffusion3_5.jpg",
       "prediction": "No",
       "rawResponse": "No"
     },
     {
       "filename": "diffusion3_6.jpg",
-      "path": "data\\images\\ai\\diffusion3_6.jpg",
+      "path": "public\\images\\ai\\diffusion3_6.jpg",
       "prediction": "No",
       "rawResponse": "No"
     },
     {
       "filename": "diffusion3_7.jpg",
-      "path": "data\\images\\ai\\diffusion3_7.jpg",
+      "path": "public\\images\\ai\\diffusion3_7.jpg",
       "prediction": "No",
       "rawResponse": "No"
     },
     {
       "filename": "diffusion3_8.jpg",
-      "path": "data\\images\\ai\\diffusion3_8.jpg",
+      "path": "public\\images\\ai\\diffusion3_8.jpg",
       "prediction": "No",
       "rawResponse": "No"
     },
     {
       "filename": "diffusion3_9.jpg",
-      "path": "data\\images\\ai\\diffusion3_9.jpg",
+      "path": "public\\images\\ai\\diffusion3_9.jpg",
       "prediction": "No",
       "rawResponse": "No"
     },
     {
       "filename": "diffusion4_1.jpg",
-      "path": "data\\images\\ai\\diffusion4_1.jpg",
+      "path": "public\\images\\ai\\diffusion4_1.jpg",
       "prediction": "No",
       "rawResponse": "No"
     },
     {
       "filename": "diffusion4_10.jpg",
-      "path": "data\\images\\ai\\diffusion4_10.jpg",
+      "path": "public\\images\\ai\\diffusion4_10.jpg",
       "prediction": "No",
       "rawResponse": "No"
     },
     {
       "filename": "diffusion4_2.jpg",
-      "path": "data\\images\\ai\\diffusion4_2.jpg",
+      "path": "public\\images\\ai\\diffusion4_2.jpg",
       "prediction": "No",
       "rawResponse": "No"
     },
     {
       "filename": "diffusion4_3.jpg",
-      "path": "data\\images\\ai\\diffusion4_3.jpg",
+      "path": "public\\images\\ai\\diffusion4_3.jpg",
       "prediction": "No",
       "rawResponse": "No"
     },
     {
       "filename": "diffusion4_4.jpg",
-      "path": "data\\images\\ai\\diffusion4_4.jpg",
+      "path": "public\\images\\ai\\diffusion4_4.jpg",
       "prediction": "No",
       "rawResponse": "No"
     },
     {
       "filename": "diffusion4_5.jpg",
-      "path": "data\\images\\ai\\diffusion4_5.jpg",
+      "path": "public\\images\\ai\\diffusion4_5.jpg",
       "prediction": "No",
       "rawResponse": "No"
     },
     {
       "filename": "diffusion4_6.jpg",
-      "path": "data\\images\\ai\\diffusion4_6.jpg",
+      "path": "public\\images\\ai\\diffusion4_6.jpg",
       "prediction": "No",
       "rawResponse": "No"
     },
     {
       "filename": "diffusion4_7.jpg",
-      "path": "data\\images\\ai\\diffusion4_7.jpg",
+      "path": "public\\images\\ai\\diffusion4_7.jpg",
       "prediction": "No",
       "rawResponse": "No"
     },
     {
       "filename": "diffusion4_8.jpg",
-      "path": "data\\images\\ai\\diffusion4_8.jpg",
+      "path": "public\\images\\ai\\diffusion4_8.jpg",
       "prediction": "No",
       "rawResponse": "No"
     },
     {
       "filename": "diffusion4_9.jpg",
-      "path": "data\\images\\ai\\diffusion4_9.jpg",
+      "path": "public\\images\\ai\\diffusion4_9.jpg",
       "prediction": "No",
       "rawResponse": "No"
     },
     {
       "filename": "gan_1.jpg",
-      "path": "data\\images\\ai\\gan_1.jpg",
+      "path": "public\\images\\ai\\gan_1.jpg",
       "prediction": "Yes",
       "rawResponse": "Yes"
     },
     {
       "filename": "gan_10.jpg",
-      "path": "data\\images\\ai\\gan_10.jpg",
+      "path": "public\\images\\ai\\gan_10.jpg",
       "prediction": "Yes",
       "rawResponse": "Yes."
     },
     {
       "filename": "gan_2.jpg",
-      "path": "data\\images\\ai\\gan_2.jpg",
+      "path": "public\\images\\ai\\gan_2.jpg",
       "prediction": "No",
       "rawResponse": "No"
     },
     {
       "filename": "gan_3.jpg",
-      "path": "data\\images\\ai\\gan_3.jpg",
+      "path": "public\\images\\ai\\gan_3.jpg",
       "prediction": "No",
       "rawResponse": "No"
     },
     {
       "filename": "gan_4.jpg",
-      "path": "data\\images\\ai\\gan_4.jpg",
+      "path": "public\\images\\ai\\gan_4.jpg",
       "prediction": "Yes",
       "rawResponse": "Yes."
     },
     {
       "filename": "gan_5.jpg",
-      "path": "data\\images\\ai\\gan_5.jpg",
+      "path": "public\\images\\ai\\gan_5.jpg",
       "prediction": "Yes",
       "rawResponse": "Yes"
     },
     {
       "filename": "gan_6.jpg",
-      "path": "data\\images\\ai\\gan_6.jpg",
+      "path": "public\\images\\ai\\gan_6.jpg",
       "prediction": "Yes",
       "rawResponse": "Yes"
     },
     {
       "filename": "gan_7.jpg",
-      "path": "data\\images\\ai\\gan_7.jpg",
+      "path": "public\\images\\ai\\gan_7.jpg",
       "prediction": "Yes",
       "rawResponse": "Yes"
     },
     {
       "filename": "gan_8.jpg",
-      "path": "data\\images\\ai\\gan_8.jpg",
+      "path": "public\\images\\ai\\gan_8.jpg",
       "prediction": "No",
       "rawResponse": "No"
     },
     {
       "filename": "gan_9.jpg",
-      "path": "data\\images\\ai\\gan_9.jpg",
+      "path": "public\\images\\ai\\gan_9.jpg",
       "prediction": "No",
       "rawResponse": "No"
     }
