@@ -499,10 +499,11 @@ function App() {
                 {/* Page Title */}
                 <Box sx={{ mb: 4 }}>
                   <Typography variant="h4" gutterBottom>
-                    Image Classification Experiment
+                    Image Classification Playground
                   </Typography>
                   <Typography variant="body1" color="text.secondary">
-                    Select test images and configure your prompt to classify AI-generated vs. real photographs
+                    Select test images and configure your prompt to classify AI-generated vs. real photographs! All images are processed directly in your browser using your OpenAI API key, with no data sent to any custom server.
+                    Note that predictions made in the browser may slightly differ from predictions made directly from the terminal (instructions available in our source code).
                   </Typography>
                 </Box>
 
