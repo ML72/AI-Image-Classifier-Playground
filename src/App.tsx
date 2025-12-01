@@ -12,8 +12,6 @@ import {
   Chip,
   Card,
   Stack,
-  Tabs,
-  Tab,
   Tooltip,
   Dialog,
   DialogTitle,
@@ -95,7 +93,6 @@ function App() {
   const [customPrompt, setCustomPrompt] = useState(prompts.basic);
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
   const [filterType, setFilterType] = useState<'all' | 'ai' | 'real'>('all');
-  const [promptTab, setPromptTab] = useState(0);
   const [openApiKey, setOpenApiKey] = useState('');
   const [apiKeyDialogOpen, setApiKeyDialogOpen] = useState(false);
   const [tempApiKey, setTempApiKey] = useState('');
@@ -134,13 +131,12 @@ function App() {
     return img.groundTruth === filterType;
   });
 
-  const handlePromptTabChange = (_: React.SyntheticEvent, newValue: number) => {
-    setPromptTab(newValue);
-    if (newValue === 0) {
-      setCustomPrompt(prompts.basic);
-    } else if (newValue === 1) {
-      setCustomPrompt(prompts.detailed);
-    }
+  const handleResetToBasic = () => {
+    setCustomPrompt(prompts.basic);
+  };
+
+  const handleResetToDetailed = () => {
+    setCustomPrompt(prompts.detailed);
   };
 
   const handleImageSelect = (imageId: string) => {
@@ -214,35 +210,77 @@ function App() {
             {/* Left Panel - Prompt Editor */}
             <Box sx={{ flex: '0 0 400px', minWidth: 0 }}>
               <Card sx={{ p: 3, position: 'sticky', top: 20 }}>
-                <Typography variant="h6" gutterBottom>
+                <Typography variant="h6" gutterBottom sx={{ mb: 3 }}>
                   Prompt Configuration
                 </Typography>
 
-                <Tabs
-                  value={promptTab}
-                  onChange={handlePromptTabChange}
-                  sx={{ mb: 2, borderBottom: 1, borderColor: 'divider' }}
-                >
-                  <Tab label="Basic" />
-                  <Tab label="Detailed" />
-                  <Tab label="Custom" />
-                </Tabs>
-
-                <TextField
-                  multiline
-                  rows={16}
-                  fullWidth
-                  value={customPrompt}
-                  onChange={(e) => setCustomPrompt(e.target.value)}
-                  variant="outlined"
-                  sx={{
-                    mb: 2,
-                    '& .MuiOutlinedInput-root': {
-                      fontFamily: 'monospace',
-                      fontSize: '0.875rem',
-                    },
-                  }}
-                />
+                <Box sx={{ position: 'relative', mb: 2 }}>
+                  <TextField
+                    multiline
+                    rows={16}
+                    fullWidth
+                    value={customPrompt}
+                    onChange={(e) => setCustomPrompt(e.target.value)}
+                    variant="outlined"
+                    placeholder="Enter your classification prompt here..."
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        fontFamily: 'monospace',
+                        fontSize: '0.875rem',
+                        pb: 5,
+                      },
+                    }}
+                  />
+                  <Box
+                    sx={{
+                      position: 'absolute',
+                      bottom: 8,
+                      right: 8,
+                      display: 'flex',
+                      gap: 1,
+                      zIndex: 1,
+                    }}
+                  >
+                    <Button
+                      size="small"
+                      variant="outlined"
+                      onClick={handleResetToBasic}
+                      sx={{
+                        fontSize: '0.75rem',
+                        py: 0.5,
+                        px: 1.5,
+                        minWidth: 'auto',
+                        textTransform: 'none',
+                        bgcolor: 'background.paper',
+                        '&:hover': {
+                          bgcolor: 'primary.main',
+                          color: 'white',
+                        },
+                      }}
+                    >
+                      Reset to Basic
+                    </Button>
+                    <Button
+                      size="small"
+                      variant="outlined"
+                      onClick={handleResetToDetailed}
+                      sx={{
+                        fontSize: '0.75rem',
+                        py: 0.5,
+                        px: 1.5,
+                        minWidth: 'auto',
+                        textTransform: 'none',
+                        bgcolor: 'background.paper',
+                        '&:hover': {
+                          bgcolor: 'primary.main',
+                          color: 'white',
+                        },
+                      }}
+                    >
+                      Reset to Detailed
+                    </Button>
+                  </Box>
+                </Box>
 
                 <Stack spacing={2}>
                   <Box>
