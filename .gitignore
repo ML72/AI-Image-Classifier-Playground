@@ -33,6 +33,7 @@ dist-ssr
 
 # Build outputs
 build
+.vite
 *.js
 *.js.map
 !vite.config.ts
