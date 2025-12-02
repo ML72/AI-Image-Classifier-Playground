@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { ThemeProvider, createTheme, useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import CssBaseline from '@mui/material/CssBaseline';
 import {
   Box,
@@ -30,6 +31,8 @@ import {
   TableRow,
   Paper,
   Divider,
+  Drawer,
+  IconButton,
 } from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import ImageIcon from '@mui/icons-material/Image';
@@ -38,6 +41,7 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import KeyIcon from '@mui/icons-material/Key';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import ErrorIcon from '@mui/icons-material/Error';
+import MenuIcon from '@mui/icons-material/Menu';
 import { prompts } from './util/prompts';
 import { BrowserImageClassifier, ExperimentResults } from './util/browser_classifier';
 import './App.css';
@@ -146,6 +150,10 @@ function App() {
   const [experimentResults, setExperimentResults] = useState<ExperimentResults | null>(null);
   const [experimentError, setExperimentError] = useState<string | null>(null);
   const [resultsDialogOpen, setResultsDialogOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const muiTheme = useTheme();
+  const isMobile = useMediaQuery(muiTheme.breakpoints.down('md'));
 
   // Handlers and utilities
   const filteredImages = testImages.filter((img) => {
@@ -230,6 +238,15 @@ function App() {
         {/* Header */}
         <AppBar position="static" elevation={0} sx={{ bgcolor: 'white', borderBottom: '1px solid #e5e7eb', flexShrink: 0 }}>
           <Toolbar sx={{ py: 1 }}>
+            <IconButton
+              color="primary"
+              aria-label="open drawer"
+              edge="start"
+              onClick={() => setMobileOpen(true)}
+              sx={{ mr: 2, display: { md: 'none' } }}
+            >
+              <MenuIcon />
+            </IconButton>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
               <ImageIcon sx={{ fontSize: 28, color: 'primary.main' }} />
               <Typography variant="h6" component="div" sx={{ color: 'text.primary', fontWeight: 700 }}>
@@ -241,15 +258,16 @@ function App() {
 
         <Box sx={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
           {/* Left Panel - Prompt Editor */}
-          <Box sx={{ 
-            width: 400, 
-            flexShrink: 0,
-            borderRight: '1px solid #e5e7eb',
-            bgcolor: 'white',
-            display: 'flex',
-            flexDirection: 'column',
-            overflow: 'hidden',
-          }}>
+          {!isMobile && (
+            <Box sx={{ 
+              width: 400, 
+              flexShrink: 0,
+              borderRight: '1px solid #e5e7eb',
+              bgcolor: 'white',
+              display: 'flex',
+              flexDirection: 'column',
+              overflow: 'hidden',
+            }}>
             <Box sx={{ 
               flex: 1, 
               overflowY: 'auto',
@@ -494,13 +512,275 @@ function App() {
                 </Stack>
               </Box>
             </Box>
+          )}
 
-            {/* Right Panel - Image Gallery */}
+          {/* Mobile Drawer */}
+          <Drawer
+            anchor="left"
+            open={mobileOpen}
+            onClose={() => setMobileOpen(false)}
+            ModalProps={{
+              keepMounted: true,
+            }}
+            sx={{
+              display: { xs: 'block', md: 'none' },
+              '& .MuiDrawer-paper': { width: 320, boxSizing: 'border-box' },
+            }}
+          >
+            <Box sx={{ 
+              flex: 1, 
+              overflowY: 'auto',
+              overflowX: 'hidden',
+              p: 3,
+              '&::-webkit-scrollbar': {
+                width: '8px',
+              },
+              '&::-webkit-scrollbar-track': {
+                background: 'transparent',
+              },
+              '&::-webkit-scrollbar-thumb': {
+                background: '#cbd5e1',
+                borderRadius: '10px',
+                '&:hover': {
+                  background: '#94a3b8',
+                },
+              },
+            }}>
+              <Typography variant="h6" gutterBottom sx={{ mb: 3 }}>
+                Prompt Configuration
+              </Typography>
+
+              <Box sx={{ position: 'relative', mb: 2 }}>
+                  <TextField
+                    multiline
+                    rows={16}
+                    fullWidth
+                    value={customPrompt}
+                    onChange={(e) => setCustomPrompt(e.target.value)}
+                    variant="outlined"
+                    placeholder="Enter your classification prompt here..."
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        fontFamily: 'monospace',
+                        fontSize: '0.875rem',
+                        pb: 5,
+                      },
+                    }}
+                  />
+                  <Box
+                    sx={{
+                      position: 'absolute',
+                      bottom: 8,
+                      right: 8,
+                      display: 'flex',
+                      gap: 1,
+                      zIndex: 1,
+                    }}
+                  >
+                    <Button
+                      size="small"
+                      variant="outlined"
+                      onClick={handleResetToBasic}
+                      sx={{
+                        fontSize: '0.75rem',
+                        py: 0.5,
+                        px: 1.5,
+                        minWidth: 'auto',
+                        textTransform: 'none',
+                        bgcolor: 'background.paper',
+                        '&:hover': {
+                          bgcolor: 'primary.main',
+                          color: 'white',
+                        },
+                      }}
+                    >
+                      Reset to Basic
+                    </Button>
+                    <Button
+                      size="small"
+                      variant="outlined"
+                      onClick={handleResetToDetailed}
+                      sx={{
+                        fontSize: '0.75rem',
+                        py: 0.5,
+                        px: 1.5,
+                        minWidth: 'auto',
+                        textTransform: 'none',
+                        bgcolor: 'background.paper',
+                        '&:hover': {
+                          bgcolor: 'primary.main',
+                          color: 'white',
+                        },
+                      }}
+                    >
+                      Reset to Detailed
+                    </Button>
+                  </Box>
+                </Box>
+
+                <Stack spacing={2}>
+                  <Box>
+                    <Typography variant="body2" color="text.secondary" gutterBottom>
+                      Selected: {selectedImages.length} / {filteredImages.length} images
+                    </Typography>
+                  </Box>
+
+                  {!openApiKey && (
+                    <Alert severity="info" sx={{ fontSize: '0.875rem' }}>
+                      <AlertTitle sx={{ fontSize: '0.875rem', fontWeight: 600 }}>API Key Required</AlertTitle>
+                      Set your OpenAI API key to run experiments
+                    </Alert>
+                  )}
+
+                  <Button
+                    variant={openApiKey ? 'outlined' : 'contained'}
+                    color={openApiKey ? 'success' : 'primary'}
+                    size="large"
+                    fullWidth
+                    startIcon={<KeyIcon />}
+                    onClick={handleOpenApiKeyDialog}
+                  >
+                    {openApiKey ? 'API Key Set' : 'Set API Key'}
+                  </Button>
+
+                  <Button
+                    variant="contained"
+                    size="large"
+                    fullWidth
+                    startIcon={isRunningExperiment ? <CircularProgress size={20} color="inherit" /> : <PlayArrowIcon />}
+                    onClick={() => {
+                      handleRunExperiment();
+                      setMobileOpen(false);
+                    }}
+                    disabled={selectedImages.length === 0 || !openApiKey || isRunningExperiment}
+                  >
+                    {isRunningExperiment ? `Processing ${experimentProgress.current}/${experimentProgress.total}...` : 'Run Experiment'}
+                  </Button>
+
+                  {/* Progress Bar */}
+                  {isRunningExperiment && (
+                    <LinearProgress 
+                      variant="determinate" 
+                      value={(experimentProgress.current / experimentProgress.total) * 100} 
+                      sx={{ borderRadius: 1 }}
+                    />
+                  )}
+
+                  {/* Error Display */}
+                  {experimentError && (
+                    <Alert severity="error" sx={{ fontSize: '0.875rem' }}>
+                      <AlertTitle sx={{ fontSize: '0.875rem', fontWeight: 600 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                          <ErrorIcon fontSize="small" />
+                          Error Running Experiment
+                        </Box>
+                      </AlertTitle>
+                      {experimentError}
+                    </Alert>
+                  )}
+
+                  {/* Results Summary */}
+                  {experimentResults && (
+                    <Card variant="outlined" sx={{ p: 2, bgcolor: 'background.default' }}>
+                      <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 600, mb: 2 }}>
+                        Experiment Results
+                      </Typography>
+
+                      <Stack spacing={1.5}>
+                        {/* Accuracy */}
+                        <Box>
+                          <Typography variant="caption" color="text.secondary" display="block">
+                            Accuracy
+                          </Typography>
+                          <Typography variant="h5" sx={{ fontWeight: 700, color: 'primary.main' }}>
+                            {(experimentResults.accuracy * 100).toFixed(1)}%
+                          </Typography>
+                        </Box>
+
+                        <Divider />
+
+                        {/* Stats */}
+                        <Box>
+                          <Stack direction="row" justifyContent="space-between" sx={{ mb: 0.5 }}>
+                            <Typography variant="caption" color="text.secondary">Correct</Typography>
+                            <Typography variant="body2" sx={{ fontWeight: 600, color: 'success.main' }}>
+                              {experimentResults.correct}
+                            </Typography>
+                          </Stack>
+                          <Stack direction="row" justifyContent="space-between" sx={{ mb: 0.5 }}>
+                            <Typography variant="caption" color="text.secondary">Incorrect</Typography>
+                            <Typography variant="body2" sx={{ fontWeight: 600, color: 'error.main' }}>
+                              {experimentResults.incorrect}
+                            </Typography>
+                          </Stack>
+                          {experimentResults.unsure > 0 && (
+                            <Stack direction="row" justifyContent="space-between">
+                              <Typography variant="caption" color="text.secondary">Unsure</Typography>
+                              <Typography variant="body2" sx={{ fontWeight: 600, color: 'warning.main' }}>
+                                {experimentResults.unsure}
+                              </Typography>
+                            </Stack>
+                          )}
+                        </Box>
+
+                        <Divider />
+
+                        {/* Confusion Matrix Summary */}
+                        <Box>
+                          <Typography variant="caption" color="text.secondary" display="block" gutterBottom>
+                            Confusion Matrix
+                          </Typography>
+                          <Stack spacing={0.5} sx={{ fontSize: '0.75rem' }}>
+                            <Stack direction="row" justifyContent="space-between">
+                              <Typography variant="caption">True Positive (AI→AI)</Typography>
+                              <Typography variant="caption" sx={{ fontWeight: 600 }}>
+                                {experimentResults.confusionMatrix.truePositive}
+                              </Typography>
+                            </Stack>
+                            <Stack direction="row" justifyContent="space-between">
+                              <Typography variant="caption">True Negative (Real→Real)</Typography>
+                              <Typography variant="caption" sx={{ fontWeight: 600 }}>
+                                {experimentResults.confusionMatrix.trueNegative}
+                              </Typography>
+                            </Stack>
+                            <Stack direction="row" justifyContent="space-between">
+                              <Typography variant="caption">False Positive (Real→AI)</Typography>
+                              <Typography variant="caption" sx={{ fontWeight: 600 }}>
+                                {experimentResults.confusionMatrix.falsePositive}
+                              </Typography>
+                            </Stack>
+                            <Stack direction="row" justifyContent="space-between">
+                              <Typography variant="caption">False Negative (AI→Real)</Typography>
+                              <Typography variant="caption" sx={{ fontWeight: 600 }}>
+                                {experimentResults.confusionMatrix.falseNegative}
+                              </Typography>
+                            </Stack>
+                          </Stack>
+                        </Box>
+
+                        <Button
+                          variant="outlined"
+                          size="small"
+                          fullWidth
+                          startIcon={<BarChartIcon />}
+                          onClick={() => setResultsDialogOpen(true)}
+                          sx={{ mt: 1 }}
+                        >
+                          View Detailed Results
+                        </Button>
+                      </Stack>
+                    </Card>
+                  )}
+                </Stack>
+              </Box>
+          </Drawer>
+
+          {/* Right Panel - Image Gallery */}
             <Box sx={{ flex: 1, overflowY: 'auto', bgcolor: 'background.default' }}>
-              <Container maxWidth="xl" sx={{ py: 4 }}>
+              <Container maxWidth="xl" sx={{ py: { xs: 2, md: 4 }, px: { xs: 2, md: 3 } }}>
                 {/* Page Title */}
-                <Box sx={{ mb: 4 }}>
-                  <Typography variant="h4" gutterBottom>
+                <Box sx={{ mb: { xs: 2, md: 4 } }}>
+                  <Typography variant="h4" gutterBottom sx={{ fontSize: { xs: '1.75rem', md: '2.125rem' } }}>
                     Image Classification Playground
                   </Typography>
                   <Typography variant="body1" color="text.secondary">
@@ -509,9 +789,9 @@ function App() {
                   </Typography>
                 </Box>
 
-                <Card sx={{ p: 3, mb: 3 }}>
-                <Stack direction="row" spacing={2} alignItems="center" justifyContent="space-between" flexWrap="wrap">
-                  <Stack direction="row" spacing={1}>
+                <Card sx={{ p: { xs: 2, md: 3 }, mb: { xs: 2, md: 3 } }}>
+                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} alignItems={{ xs: 'stretch', sm: 'center' }} justifyContent="space-between">
+                  <Stack direction="row" spacing={1} flexWrap="wrap">
                     <Chip
                       label="All"
                       onClick={() => setFilterType('all')}
@@ -549,8 +829,12 @@ function App() {
               <Box
                 sx={{
                   display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
-                  gap: 2,
+                  gridTemplateColumns: {
+                    xs: 'repeat(auto-fill, minmax(140px, 1fr))',
+                    sm: 'repeat(auto-fill, minmax(160px, 1fr))',
+                    md: 'repeat(auto-fill, minmax(180px, 1fr))',
+                  },
+                  gap: { xs: 1.5, md: 2 },
                 }}
               >
                 {filteredImages.map((image) => (
@@ -718,6 +1002,7 @@ function App() {
           onClose={() => setResultsDialogOpen(false)}
           maxWidth="lg"
           fullWidth
+          scroll="paper"
         >
           <DialogTitle>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -733,32 +1018,36 @@ function App() {
                   <Typography variant="h6" gutterBottom>
                     Summary
                   </Typography>
-                  <Stack direction="row" spacing={3}>
-                    <Card variant="outlined" sx={{ flex: 1, p: 2 }}>
+                  <Box sx={{ 
+                    display: 'grid',
+                    gridTemplateColumns: { xs: 'repeat(2, 1fr)', sm: 'repeat(4, 1fr)' },
+                    gap: { xs: 2, sm: 3 },
+                  }}>
+                    <Card variant="outlined" sx={{ p: 2 }}>
                       <Typography variant="caption" color="text.secondary">Accuracy</Typography>
                       <Typography variant="h4" sx={{ color: 'primary.main', fontWeight: 700 }}>
                         {(experimentResults.accuracy * 100).toFixed(1)}%
                       </Typography>
                     </Card>
-                    <Card variant="outlined" sx={{ flex: 1, p: 2 }}>
+                    <Card variant="outlined" sx={{ p: 2 }}>
                       <Typography variant="caption" color="text.secondary">Total Images</Typography>
                       <Typography variant="h4" sx={{ fontWeight: 700 }}>
                         {experimentResults.totalImages}
                       </Typography>
                     </Card>
-                    <Card variant="outlined" sx={{ flex: 1, p: 2 }}>
+                    <Card variant="outlined" sx={{ p: 2 }}>
                       <Typography variant="caption" color="text.secondary">Correct</Typography>
                       <Typography variant="h4" sx={{ color: 'success.main', fontWeight: 700 }}>
                         {experimentResults.correct}
                       </Typography>
                     </Card>
-                    <Card variant="outlined" sx={{ flex: 1, p: 2 }}>
+                    <Card variant="outlined" sx={{ p: 2 }}>
                       <Typography variant="caption" color="text.secondary">Incorrect</Typography>
                       <Typography variant="h4" sx={{ color: 'error.main', fontWeight: 700 }}>
                         {experimentResults.incorrect}
                       </Typography>
                     </Card>
-                  </Stack>
+                  </Box>
                 </Box>
 
                 {/* Confusion Matrix */}
